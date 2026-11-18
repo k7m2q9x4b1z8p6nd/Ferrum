@@ -1,10 +1,33 @@
 # Changelog
 
-## Unreleased
+## 1.0.2
 
 ### Added
-- **Memory saver** (Settings > General, on by default). Tabs you have not looked at for 5 minutes are put to sleep with WebView2 `TrySuspend` and their renderer memory is released; the tab title is dimmed in the strip and the tab wakes when you select it. Hidden tabs are also asked to use less memory (`MemoryUsageTargetLevel` low). Tabs that are pinned, playing audio, loading or being restored stay awake, and nothing is suspended while a download is running.
-- With Memory saver on, the preloaded new tab and the popup webview are released after a minute without use and recreated on demand: the first new tab after that takes about 65 ms instead of 15 ms and the first popup about 100 ms instead of 20 ms.
+- **Memory saver** (Settings > General, on by default). A tab you have not looked at for 5 minutes is suspended with WebView2 `TrySuspend` and its renderer memory is released. Hidden tabs are also asked to use less memory (`MemoryUsageTargetLevel` low). The suspended tab's title is dimmed in the strip and it wakes when you select it, with its page state kept.
+- Tabs that are pinned, playing audio, loading or being restored are never suspended, and nothing is suspended while a download is running.
+- With Memory saver on, the preloaded spare tab and the popup webview are released after a minute without use and recreated on demand. The cost: the first new tab after that takes about 65 ms instead of about 15 ms, and the first popup about 100 ms instead of about 20 ms.
+- `scripts/mem.mjs`, a harness that lists every `msedgewebview2.exe` process and measures private memory per process.
+
+### What it does to memory
+Measured on the author's machine (Windows 11, i7-11700F, 31.8 GB, WebView2 157), local pages, private memory in MB, median of 5 runs, with a 15 second test timeout instead of the real 5 minutes:
+
+| Setup | Before | Memory saver on |
+|---|---|---|
+| 3 extensions, 1 tab | 267 | 239 |
+| 3 extensions, 5 tabs | 336 | 258 |
+| 3 extensions, 10 tabs | 506 | 363 |
+| no extensions, 10 tabs | 290 | 177 |
+
+- One run at the real 5 minute timeout (5 tabs, 3 extensions) gave 233 MB.
+- With uBlock Origin installed, results vary by 50 to 100 MB between runs, because its background page ranges from about 86 to 190 MB.
+- The number of `msedgewebview2.exe` processes drops by only 2, because suspended tabs keep their renderer process. The saving comes from each suspended renderer shrinking to about 0 to 1.4 MB.
+- Speedometer 3.1 and startup time are unchanged (28.6 to 28.7 against 28.7).
+
+### Known limitations
+- Most of the memory is Chromium itself: the browser, GPU, network and storage processes (about 120 MB with one tab) and one renderer per site. Memory saver cannot remove those.
+- uBlock Origin's persistent background page (about 85 MB plus its share in the browser process) stays, because making it non-persistent would break its filter state.
+- Audio, download and pinned-tab exemptions are covered by unit tests, not by manual testing. Real sites were not measured, only local pages.
+- `--process-per-site` would cut about 18 MB more but lets one busy page affect every tab of the same site, so it is not used.
 
 ## 1.0.1
 
