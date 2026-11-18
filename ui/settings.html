@@ -1,0 +1,335 @@
+<!doctype html><meta charset=utf-8><meta name=darkreader-lock><meta name=color-scheme content=dark><meta name=viewport content="width=device-width,initial-scale=1"><style>html{background:#131316}</style><title>Settings</title><link rel=stylesheet href=base.css><link rel=icon href=icons/fav.png>
+<style>
+:root{--ring:color-mix(in srgb,var(--ac) 40%,transparent);--hv:rgba(255,255,255,.035);--er:#f87171;--sp:cubic-bezier(.34,1.56,.64,1);--eo:cubic-bezier(.22,1,.36,1);--glow:rgba(139,124,255,.5)}
+body{position:relative}
+@keyframes drift{to{transform:translate3d(3%,2%,0) scale(1.06)}}
+@keyframes rise{from{opacity:0;transform:translateY(14px) scale(.98)}}
+@keyframes pop{from{opacity:0;transform:scale(.9)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes breathe{50%{transform:scale(1.12);opacity:.65}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes flash{from{background:rgba(139,124,255,.16)}}
+.grow{flex:1;min-width:0}
+.shell{position:relative;z-index:1;display:grid;grid-template-columns:232px minmax(0,1fr);height:100%}
+.side{padding:24px 14px;border-right:1px solid var(--bd);background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);display:flex;flex-direction:column;gap:18px;min-width:0}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px}
+.brand img{width:28px;height:28px;border-radius:8px}
+.brand b{font-size:15px;font-weight:600}
+.nav{position:relative;display:flex;flex-direction:column;gap:2px}
+.nav a{position:relative;z-index:1;display:flex;align-items:center;gap:10px;height:36px;padding:0 12px;border-radius:8px;color:var(--dim);text-decoration:none;white-space:nowrap;outline:0;transition:color .15s,background .15s}
+.nav a:not(.on):hover{color:var(--tx);background:var(--hv)}
+.nav a.on{color:var(--tx)}
+.nav a:focus-visible{box-shadow:0 0 0 3px var(--ring)}
+.nav a svg{transition:transform .3s var(--sp),color .2s}
+.nav a:hover svg{transform:scale(1.14)}
+.nav a.on svg{color:var(--ac)}
+.ind{position:absolute;left:0;top:0;width:0;height:0;border-radius:8px;background:var(--s2);border:1px solid var(--s3);pointer-events:none}
+.ind::before{content:"";position:absolute;left:-1px;top:9px;bottom:9px;width:3px;border-radius:2px;background:var(--ac)}
+.ind.rdy{transition:transform .45s var(--sp),width .35s var(--eo),height .35s var(--eo)}
+#sc{overflow:auto;min-width:0;scroll-behavior:smooth}
+.wrap{max-width:700px;margin:0 auto;padding:40px 28px 30vh}
+.js .rs{animation:rise .6s var(--eo) both;animation-delay:calc(var(--d,0)*80ms + 80ms)}
+section{margin-bottom:36px;scroll-margin-top:24px}
+.js section .sh,.js section>.card,.js section>.note{opacity:0}
+.js section.in .sh,.js section.in>.card,.js section.in>.note{opacity:1;animation:rise .6s var(--eo) both;animation-delay:calc(var(--i,0)*80ms)}
+section>:nth-child(2){--i:1}section>:nth-child(3){--i:2}section>:nth-child(4){--i:3}section>:nth-child(5){--i:4}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh h2{font-size:15px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--tx);margin:0 0 1px}
+.sh p{color:var(--dim)}
+.card{position:relative;overflow:hidden;background:color-mix(in srgb,var(--s1) 86%,transparent);transition:border-color .25s,box-shadow .35s}
+.card+.card{margin-top:12px}
+.card:hover{border-color:var(--s3)}
+.row{transition:background .15s}
+.row:hover{background:var(--hv)}
+.row .act{display:flex;align-items:center;gap:12px}
+.row b,.row small{overflow-wrap:anywhere}
+.row.pad{display:block}
+.sw{position:relative;width:40px;height:22px;border-radius:11px;outline:0;background:var(--s3);transition:background .2s}
+.sw::after{width:16px;height:16px;top:3px;left:3px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.4);transition:transform .3s var(--sp),width .15s}
+.sw.on::after{transform:translateX(18px)}
+.sw:active::after{width:20px}
+.sw.on:active::after{transform:translateX(14px)}
+.sw:hover:not(.on){background:#383842}
+.sw:focus-visible{box-shadow:0 0 0 3px var(--ring)}
+.sw svg{position:absolute;z-index:1;left:3px;top:3px;width:18px;height:18px;padding:4px;stroke:var(--ac);stroke-width:2.8;stroke-dasharray:16;stroke-dashoffset:16;pointer-events:none;transition:transform .35s var(--sp),stroke-dashoffset .3s var(--eo)}
+.sw.on svg{transform:translateX(18px);stroke-dashoffset:0;transition-delay:0s,.08s}
+.sel{position:relative;flex:none}
+.sel select{appearance:none;-webkit-appearance:none;min-width:170px;padding:0 34px 0 12px;transition:border-color .15s,box-shadow .15s,background .15s}
+.sel select:hover{background:var(--s3)}
+.sel select:focus,.sel select:focus-visible{outline:0;border-color:var(--ac);box-shadow:0 0 0 3px var(--ring)}
+.sel svg{position:absolute;right:11px;top:50%;margin-top:-8px;color:var(--dim);pointer-events:none}
+.chip{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 14px;color:var(--tx);font-weight:500;outline:0;white-space:nowrap;transition:background .15s,color .15s,border-color .15s,transform .35s var(--sp),box-shadow .2s}
+.chip svg{width:14px;height:14px}
+.chip:hover{border-color:var(--s3)}
+.chip:active{transform:scale(.96)}
+.chip:focus-visible{border-color:var(--ac);box-shadow:0 0 0 3px var(--ring)}
+.chip:disabled{opacity:.5;cursor:default;pointer-events:none}
+.chip.pri{background:var(--ac);border-color:var(--ac);color:var(--bg);font-weight:600}
+.chip.pri:hover{filter:brightness(1.1)}
+.chip.rm{color:var(--dim)}
+.chip.rm:hover{color:var(--er);border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.08)}
+.chip.rm.cf{color:var(--er);border-color:rgba(248,113,113,.5);background:rgba(248,113,113,.12)}
+.add{display:flex;gap:8px;margin-top:12px}
+.add input{flex:1;min-width:0;height:34px;background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:0 12px;font:inherit;outline:0;user-select:text;transition:border-color .15s,box-shadow .15s}
+.add input::placeholder{color:#5d5d68}
+.add input:hover{border-color:var(--s3)}
+.add input:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--ring)}
+.add input:disabled{opacity:.5}
+.add .chip{flex:none}
+.or{display:flex;align-items:center;gap:10px;margin-top:14px;color:var(--dim);font-size:12px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--bd)}
+.prog{height:4px;border-radius:2px;background:var(--s3);margin-top:12px;overflow:hidden;opacity:0;transition:opacity .2s}
+.prog.on{opacity:1}
+.prog i{display:block;height:100%;width:40%;border-radius:2px;background:var(--ac);animation:ind 1.1s var(--eo) infinite}
+@keyframes ind{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
+#xst{display:block;margin-top:10px}
+#xst:empty{display:none}
+#xst:not(:empty){padding:9px 12px;border-radius:8px;border:1px solid var(--bd);border-left-width:3px;background:var(--bg);animation:rise .35s var(--eo) both}
+#xst.err{color:var(--er);border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.07)}
+#xst.ok{color:var(--ok);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.06)}
+#xst div{color:var(--dim);margin-top:2px}
+#exts{max-height:min(56vh,520px);overflow-y:auto;overscroll-behavior:contain}
+.ic{width:34px;height:34px;border-radius:9px;flex:none;display:grid;place-items:center;background:var(--s2);border:1px solid var(--bd);color:var(--dim);overflow:hidden;font-weight:600;font-size:14px;transition:transform .4s var(--sp)}
+.ic img{width:24px;height:24px;object-fit:contain}
+.row.ex:hover .ic{transform:scale(1.06) rotate(-3deg)}
+.mt{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.bd{border:1px solid var(--bd);border-radius:5px;padding:0 5px;font-size:10px;line-height:15px}
+.bd.chrome,.bd.firefox{border:0;padding:0;display:inline-flex}
+.bd svg{width:12px;height:12px;stroke:none}
+.us{display:block;margin-top:2px;animation:pop .25s var(--eo)}
+.us:empty{display:none}
+.us.new{color:var(--ac)}.us.ok,.us.done{color:var(--ok)}.us.err{color:var(--er)}
+#xchk.busy svg{animation:spin .8s linear infinite}
+.row.ex{justify-content:flex-start;flex-wrap:wrap}
+.row.ex .act{margin-left:auto}
+.row.ex.enter{animation:rise .5s var(--eo) both,flash 1.1s ease-out}
+.row.ex.leave{overflow:hidden;opacity:0;transform:translateX(26px);max-height:0!important;padding-top:0;padding-bottom:0;border-top-width:0;transition:opacity .2s ease-in,transform .26s ease-in,max-height .3s var(--eo) .06s,padding .3s var(--eo) .06s;pointer-events:none}
+.empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:26px 16px;color:var(--dim);text-align:center;animation:rise .5s var(--eo) both}
+.empty svg{width:22px;height:22px;opacity:.7}
+.note{display:flex;align-items:flex-start;gap:10px;margin-top:12px;padding:12px 14px;border-radius:12px;border:1px solid color-mix(in srgb,var(--warn,#facc15) 30%,var(--bd));background:color-mix(in srgb,#facc15 7%,var(--s1));color:var(--dim);line-height:1.5}
+.note[hidden]{display:none}
+.note svg{color:#facc15;margin-top:1px}
+.note b{display:block;color:var(--tx);font-weight:600}
+.about{position:relative}
+.about .row{position:relative;flex-wrap:wrap}
+.about .mark{width:40px;height:40px}
+.about .mark img{width:40px;height:40px;border-radius:10px}
+.about .about .badge{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 8px;margin-left:8px;border-radius:10px;font-size:11px;font-weight:500;vertical-align:1px;border:1px solid var(--bd);color:var(--dim);animation:pop .4s var(--sp)}
+.badge[hidden]{display:none}
+.badge.ok{color:var(--ok);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.08)}
+.badge.new{color:var(--ac);border-color:rgba(139,124,255,.35);background:rgba(139,124,255,.12)}
+.badge.new::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ac);animation:breathe 2s ease-in-out infinite}
+.badge.err{color:var(--er);border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.08)}
+#upd a{color:var(--ac);text-decoration:none}#upd a:hover{text-decoration:underline}
+#upd a:focus-visible{outline:0;box-shadow:0 0 0 3px var(--ring);border-radius:3px}
+#chk.busy svg{animation:spin .8s linear infinite}
+#toast{position:fixed;left:50%;bottom:22px;display:flex;align-items:center;gap:10px;min-height:42px;padding:0 16px 0 12px;border-radius:14px;background:color-mix(in srgb,var(--s2) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--s3);box-shadow:0 14px 36px -10px rgba(0,0,0,.7);color:var(--tx);overflow:hidden;opacity:0;transform:translate(-50%,16px) scale(.96);pointer-events:none;transition:opacity .2s,transform .4s var(--sp);z-index:9}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast svg{width:20px;height:20px;overflow:visible}
+#toast circle{fill:rgba(74,222,128,.12);stroke:var(--ok);stroke-width:1.6;stroke-dasharray:63;stroke-dashoffset:63}
+#toast path{stroke:var(--ok);stroke-width:2.2;stroke-dasharray:16;stroke-dashoffset:16}
+#toast.show circle{animation:draw .5s var(--eo) .05s forwards}
+#toast.show path{animation:draw .35s var(--eo) .3s forwards}
+#toast .tb{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--ok);opacity:.7;transform-origin:left;transform:scaleX(0)}
+#toast.show .tb{animation:tb 1.6s linear}
+@keyframes tb{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@media (max-width:820px){
+.shell{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+.side{padding:10px 12px 8px;border-right:0;border-bottom:1px solid var(--bd);gap:0}
+.brand{display:none}
+.nav{flex-direction:row;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.nav::-webkit-scrollbar{display:none}
+.nav a{flex:none;padding:0 11px}
+.ind::before{left:10px;right:10px;top:auto;bottom:-1px;width:auto;height:2px}
+.wrap{padding:24px 18px 30vh}
+}
+@media (max-width:560px){.row{flex-wrap:wrap}.sel select{min-width:140px}.add{flex-wrap:wrap}.add input{flex-basis:100%}}}
+@media (prefers-reduced-motion:reduce){
+#sc{scroll-behavior:auto}
+*,*::before,*::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0s!important}
+.js section .sh,.js section>.card,.js section>.note{opacity:1}
+}
+.ov{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(8,8,10,.62);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);animation:pop .18s var(--eo) both}
+.ov[hidden]{display:none}
+.dlg{width:min(520px,100%);max-height:calc(100vh - 40px);display:flex;flex-direction:column;gap:12px;padding:22px;border-radius:14px;background:var(--s1);border:1px solid var(--s3);box-shadow:0 24px 64px rgba(0,0,0,.55)}
+.dlg h3{font-size:16px;font-weight:600}
+.dlg .dim{color:var(--dim)}
+#udn{overflow:auto;min-height:60px;max-height:300px;padding:12px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--bd);user-select:text;outline:0}
+#udn:focus-visible{border-color:var(--ac)}
+#udn h4{font-size:13px;font-weight:600;margin:10px 0 4px}#udn h4:first-child{margin-top:0}
+#udn p{margin:0 0 6px}#udn ul{margin:0 0 6px;padding-left:18px}#udn li{margin:2px 0}
+#udn code{padding:1px 5px;border-radius:4px;background:var(--s2);font:12px Consolas,monospace}
+#udn .none{color:var(--dim)}
+.dlg .bt{display:flex;justify-content:flex-end;gap:8px}
+#ude{color:var(--er)}
+#udm{color:var(--dim)}
+</style>
+<svg width=0 height=0 style=position:absolute aria-hidden=true>
+<symbol id=i-sl viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></symbol>
+<symbol id=i-se viewBox="0 0 24 24"><circle cx=11 cy=11 r=8 /><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id=i-sh viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id=i-bk viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></symbol>
+<symbol id=i-pz viewBox="0 0 24 24"><path d="M19.4 11H18V7a2 2 0 0 0-2-2h-4V3.6a2.1 2.1 0 0 0-4.2 0V5H4a2 2 0 0 0-2 2v3.8h1.4a2.2 2.2 0 0 1 0 4.4H2V19a2 2 0 0 0 2 2h3.8v-1.4a2.2 2.2 0 0 1 4.4 0V21H16a2 2 0 0 0 2-2v-4h1.4a2.1 2.1 0 0 0 0-4.2z"/></symbol>
+<symbol id=i-dl viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+<symbol id=i-in viewBox="0 0 24 24"><circle cx=12 cy=12 r=10 /><path d="M12 16v-4M12 8h.01"/></symbol>
+<symbol id=i-ck viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id=i-rf viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M8 16H3v5"/></symbol>
+<symbol id=i-fd viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+<symbol id=i-fl viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></symbol>
+<symbol id=i-pl viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+<symbol id=i-cd viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id=i-lk viewBox="0 0 24 24"><rect x=4 y=11 width=16 height=10 rx=2 /><path d="M8 11V7a4 4 0 018 0v4"/></symbol>
+<symbol id=i-wn viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3M12 9v4M12 17h.01"/></symbol>
+</svg>
+<div class=shell>
+<aside class=side>
+<div class=brand><img src=icons/app.png alt=""><b>Settings</b></div>
+<nav class=nav id=nav aria-label="Settings sections"><span class=ind id=ind></span>
+<a href=#general data-s=general><svg><use href=#i-sl /></svg>General</a>
+<a href=#search data-s=search><svg><use href=#i-se /></svg>Search</a>
+<a href=#privacy data-s=privacy><svg><use href=#i-sh /></svg>Privacy &amp; autofill</a>
+<a href=#bookmarks data-s=bookmarks><svg><use href=#i-bk /></svg>Bookmarks</a>
+<a href=#extensions data-s=extensions><svg><use href=#i-pz /></svg>Extensions</a>
+<a href=#import data-s=import><svg><use href=#i-dl /></svg>Import</a>
+<a href=#about data-s=about><svg><use href=#i-in /></svg>About &amp; updates</a>
+</nav>
+</aside>
+<main id=sc><div class=wrap>
+<section id=general><div class=sh><div><h2>General</h2><p>How links open and how pages are rendered</p></div></div>
+<div class=card>
+<div class=row><div><b>Downloads popup</b><small>Show the downloads popup when a download starts</small></div><div class=sw data-k=dl_popup role=switch tabindex=0 aria-checked=false aria-label="Downloads popup"></div></div>
+<div class=row><div><b>Resume last tabs</b><small>Reopen the tabs you had open when you last closed the browser. Private tabs are not restored</small></div><div class=sw data-k=resume_tabs role=switch tabindex=0 aria-checked=false aria-label="Resume last tabs"></div></div>
+<div class=row><div><b>Open links in new tab</b><small>Links that open a new window use a new tab instead of the current one</small></div><div class=sw data-k=links_in_new_tab role=switch tabindex=0 aria-checked=false aria-label="Open links in new tab"></div></div>
+<div class=row><div><b>Hardware acceleration</b><small>Render on the GPU. Restart to apply</small></div><div class=sw data-k=hardware_accel role=switch tabindex=0 aria-checked=false aria-label="Hardware acceleration"></div></div>
+</div>
+<div class=note id=hwn role=status hidden><svg><use href=#i-wn /></svg><div><b>Restart to apply</b>Hardware acceleration changes take effect the next time the browser starts.</div></div>
+</section>
+
+<section id=search><div class=sh><div><h2>Search</h2><p>Choose where your searches go</p></div></div>
+<div class=card><div class=row><div><b>Default search engine</b><small>Used by the address bar and new tab</small></div><div class=sel><select id=engine aria-label="Default search engine"></select><svg><use href=#i-cd /></svg></div></div>
+<div class=row><div><b>Clean address bar</b><small>Hide http:// and https://, and show internal pages like Bookmarks or Settings by name. The full address appears when you click the bar</small></div><div class=sw data-k=clean_urls role=switch tabindex=0 aria-checked=false aria-label="Clean address bar"></div></div>
+<div class=row><div><b>Focus mode</b><small>Hide the tabs and toolbar for a distraction-free page. Move the mouse to the top edge to bring them back. Also Ctrl+Shift+F</small></div><div class=sw data-k=focus_mode role=switch tabindex=0 aria-checked=false aria-label="Focus mode"></div></div></div>
+</section>
+
+<section id=privacy><div class=sh><div><h2>Privacy &amp; autofill</h2><p>Control what the browser remembers for you</p></div></div>
+<div class=card><div class=row><div><b>Autofill suggestions</b><small>Suggest saved emails, usernames and passwords, and offer to save them</small></div><div class=sw data-k=autofill role=switch tabindex=0 aria-checked=false aria-label="Autofill suggestions"></div></div></div>
+</section>
+
+<section id=bookmarks><div class=sh><div><h2>Bookmarks</h2><p>Quick access to the sites you saved</p></div></div>
+<div class=card><div class=row><div><b>Show bookmarks bar</b><small>Display bookmarks on the new tab page</small></div><div class=sw data-k=bookmarks_bar role=switch tabindex=0 aria-checked=false aria-label="Show bookmarks bar"></div></div></div>
+</section>
+
+<section id=extensions><div class=sh><div><h2>Extensions</h2><p>Add, enable and remove browser extensions</p></div></div>
+<div class=card><div class="row pad"><b>Add extension</b><small>Chrome Web Store or addons.mozilla.org link, extension ID or add-on name, or a direct .crx / .xpi / .zip link. Firefox extensions are converted automatically; the ones that need Firefox-only features are refused</small>
+<form class=add id=xform><input id=xin placeholder="Paste a link, ID or name" autocomplete=off spellcheck=false aria-label="Extension link, ID or name"><button class="chip pri" id=xgo><svg><use href=#i-pl /></svg>Add to Ferrum</button></form>
+<div class=prog id=xprog aria-hidden=true><i></i></div>
+<div class=or>or load from disk</div>
+<div class=add><button type=button class=chip id=xfile><svg><use href=#i-fl /></svg>Choose file…</button><button type=button class=chip id=xdir><svg><use href=#i-fd /></svg>Choose folder…</button></div>
+<small id=xst role=status aria-live=polite></small></div></div>
+<div class=card><div class=row><div><b>Auto-update extensions</b><small>Check for newer versions once a day and install them quietly</small></div><div class=sw data-k=auto_update_ext role=switch tabindex=0 aria-checked=false aria-label="Auto-update extensions"></div></div>
+<div class=row><div><b>Extension updates</b><small>Look for new versions of the extensions you installed from a store</small></div><button type=button id=xchk class=chip><svg><use href=#i-rf /></svg>Check all</button></div></div>
+<div class=card id=exts><div class=row id=xload><small>Loading…</small></div></div>
+</section>
+
+<section id=import><div class=sh><div><h2>Import</h2><p>Move your data over from another browser</p></div></div>
+<div class=card><div class=row><div><b>Import from another browser</b><small>Bring over bookmarks, history and cookies from Chrome, Edge, Firefox and others</small></div><button id=imp class=chip><svg><use href=#i-dl /></svg>Import</button></div></div>
+</section>
+
+<section id=about><div class=sh><div><h2>About &amp; updates</h2><p>Version information and update checks</p></div></div>
+<div class="card about"><div class=row><div class=mark><img src=icons/app.png alt=""></div><div class=grow><b>Ferrum<span class=badge id=ub hidden></span></b><small id=ver></small><small id=upd style=display:block></small></div><button id=chk class=chip><svg><use href=#i-rf /></svg>Check for updates</button></div></div>
+</section>
+</div></main>
+</div>
+<div id=ud class=ov hidden><div class=dlg role=dialog aria-modal=true aria-labelledby=udt><h3 id=udt>Update available</h3><div class=dim id=udv></div><div id=udn tabindex=0></div><div id=udp hidden><div class=pb><i id=udb style=width:0></i></div><small id=udm></small></div><small id=ude hidden></small><div class=bt><button type=button id=udx class=chip>Cancel</button><button type=button id=udg class="chip pri">Update</button></div></div></div>
+<div id=toast role=status aria-live=polite><svg viewBox="0 0 24 24" aria-hidden=true><circle cx=12 cy=12 r=10 /><path d="M7.5 12.5l3 3 6-6.5"/></svg><span id=tt>Saved</span><i class=tb></i></div>
+<script>
+document.documentElement.classList.add("js");
+const send=o=>ipc.postMessage(JSON.stringify(o)),$=id=>document.getElementById(id);
+let S={};
+let tmr;const toast=m=>{$("tt").textContent=m||"Saved";const t=$("toast"),b=t.querySelector(".tb");b.style.animation="none";void b.offsetWidth;b.style.animation="";t.classList.add("show");clearTimeout(tmr);tmr=setTimeout(()=>t.classList.remove("show"),1600)};
+const keyClick=e=>{if(e.key==" "||e.key=="Enter"){e.preventDefault();e.target.click()}};
+document.querySelectorAll(".sw").forEach(e=>{e.onclick=()=>{S[e.dataset.k]=!S[e.dataset.k];send({c:"set",k:e.dataset.k,v:S[e.dataset.k]});draw();if(e.dataset.k=="hardware_accel")$("hwn").hidden=false;toast(e.dataset.k=="hardware_accel"?"Saved. Restart to apply":"Saved")};e.onkeydown=keyClick});
+$("engine").onchange=()=>{send({c:"set",k:"engine",v:$("engine").value});toast()};
+function draw(){
+ document.querySelectorAll(".sw[data-k]").forEach(e=>{const on=!!S[e.dataset.k];e.classList.toggle("on",on);e.setAttribute("aria-checked",on)});
+ $("engine").innerHTML=S.engines.map(x=>`<option value="${esc(x.id)}"${x.id==S.engine?" selected":""}>${esc(x.name)}</option>`).join("");
+}
+const esc=t=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const SRC={chrome:"Chrome",firefox:"Firefox",local:"Local"},U={};
+const LG={chrome:'<svg viewBox="0 0 16 16"><circle cx=8 cy=8 r=7 fill="#ea4335"/><path d="M8 8L1.94 4.5A7 7 0 0 0 8 15z" fill="#34a853"/><path d="M8 8V15A7 7 0 0 0 14.06 4.5z" fill="#fbbc05"/><circle cx=8 cy=8 r=3.3 fill="#fff"/><circle cx=8 cy=8 r=2.5 fill="#4285f4"/></svg>',firefox:'<svg viewBox="0 0 24 24"><defs><linearGradient id=ffg x1=20 y1=3 x2=5 y2=22 gradientUnits=userSpaceOnUse><stop offset=0 stop-color="#ffbd4f"/><stop offset=.45 stop-color="#ff5a3d"/><stop offset=1 stop-color="#c31a9b"/></linearGradient></defs><path fill="url(#ffg)" d="M8.824 7.287c.008 0 .004 0 0 0zm-2.8-1.4c.006 0 .003 0 0 0zm16.754 2.161c-.505-1.215-1.53-2.528-2.333-2.943.654 1.283 1.033 2.57 1.177 3.53l.002.02c-1.314-3.278-3.544-4.6-5.366-7.477-.091-.147-.184-.292-.273-.446a3.545 3.545 0 01-.13-.24 2.118 2.118 0 01-.172-.46.03.03 0 00-.027-.03.038.038 0 00-.021 0l-.006.001a.037.037 0 00-.01.005L15.624 0c-2.585 1.515-3.657 4.168-3.932 5.856a6.197 6.197 0 00-2.305.587.297.297 0 00-.147.37c.057.162.24.24.396.17a5.622 5.622 0 012.008-.523l.067-.005a5.847 5.847 0 011.957.222l.095.03a5.816 5.816 0 01.616.228c.08.036.16.073.238.112l.107.055a5.835 5.835 0 01.368.211 5.953 5.953 0 012.034 2.104c-.62-.437-1.733-.868-2.803-.681 4.183 2.09 3.06 9.292-2.737 9.02a5.164 5.164 0 01-1.513-.292 4.42 4.42 0 01-.538-.232c-1.42-.735-2.593-2.121-2.74-3.806 0 0 .537-2 3.845-2 .357 0 1.38-.998 1.398-1.287-.005-.095-2.029-.9-2.817-1.677-.422-.416-.622-.616-.8-.767a3.47 3.47 0 00-.301-.227 5.388 5.388 0 01-.032-2.842c-1.195.544-2.124 1.403-2.8 2.163h-.006c-.46-.584-.428-2.51-.402-2.913-.006-.025-.343.176-.389.206-.406.29-.787.616-1.136.974-.397.403-.76.839-1.085 1.303a9.816 9.816 0 00-1.562 3.52c-.003.013-.11.487-.19 1.073-.013.09-.026.181-.037.272a7.8 7.8 0 00-.069.667l-.002.034-.023.387-.001.06C.386 18.795 5.593 24 12.016 24c5.752 0 10.527-4.176 11.463-9.661.02-.149.035-.298.052-.448.232-1.994-.025-4.09-.753-5.844z"/></svg>'};
+const ust=x=>{const u=U[x.id]||{},v=esc(u.v||"");return u.s=="checking"?["","Checking…"]:u.s=="ok"?["ok","Up to date"]:u.s=="new"?["new","Update available v"+v]:u.s=="busy"?["","Updating…"]:u.s=="done"?["done","Updated to v"+v]:u.s=="err"?["err",esc(u.m||"Failed")]:["",""]};
+const rowIn=(x,i)=>{const n=x.name.startsWith("__MSG")?"Extension":x.name,u=U[x.id]||{},w=u.s=="checking"||u.s=="busy",[uc,ut]=ust(x);
+ return `<div class=ic>${x.icon?`<img src="${esc(x.icon)}" alt="">`:esc((n[0]||"?").toUpperCase())}</div><div class=grow><b>${esc(n)}</b><small class=mt>${x.version?"v"+esc(x.version):""}<span class="bd ${esc(x.source)}" title="${SRC[x.source]||"Local"}">${LG[x.source]||"Local"}</span></small><small class="us ${uc}">${ut}</small></div><div class=act>${u.s=="new"?`<button class="chip pri" data-u=${i}>Update</button>`:x.up?`<button class=chip data-c=${i}${w?" disabled":""}>Check for update</button>`:""}${x.rm?`<button class="chip rm${x.c?" cf":""}" data-r=${i}>${x.c?"Confirm remove":"Remove"}</button>`:""}<div class="sw${x.on?" on":""}" data-e=${i} role=switch tabindex=0 aria-checked=${!!x.on} aria-label="Enable ${esc(n)}"></div></div>`};
+const leave=n=>{n.classList.remove("enter");n.style.maxHeight=n.offsetHeight+"px";void n.offsetWidth;n.classList.add("leave");setTimeout(()=>n.remove(),420)};
+window.rbExts=l=>{const a=document.activeElement,k=a&&a.dataset?["r","e","c","u"].find(n=>a.dataset[n]!==undefined):"",ki=k?a.dataset[k]:"";
+ const box=$("exts"),old=new Map([...box.querySelectorAll(":scope>.row.ex:not(.leave)")].map(n=>[n.dataset.id,n])),keep=new Set(),ld=$("xload"),em=$("xempty");
+ if(ld)ld.remove();
+ if(l.length){if(em)em.remove()}else if(!em)box.insertAdjacentHTML("beforeend","<div class=empty id=xempty><svg><use href=#i-pz /></svg><span>No extensions installed</span></div>");
+ let prev=null;
+ l.forEach((x,i)=>{const h=rowIn(x,i);let n=old.get(x.id);
+  if(!n){n=document.createElement("div");n.className="row ex enter";n.dataset.id=x.id;n.innerHTML=h;n._h=h}
+  else if(n._h!==h){n.innerHTML=h;n._h=h}
+  keep.add(x.id);
+  let ref=prev?prev.nextElementSibling:box.firstElementChild;
+  while(ref&&ref.classList.contains("leave"))ref=ref.nextElementSibling;
+  if(ref!==n)box.insertBefore(n,ref);
+  prev=n});
+ old.forEach((n,id)=>{if(!keep.has(id))leave(n)});
+ window.X=l;
+ if(k){const n=box.querySelector(`[data-${k}="${ki}"]`);if(n)n.focus()}};
+window.rbExtUpd=r=>{U[r.id]=r;if(window.X)rbExts(X);const b=$("xchk");if(r.s=="checking")b.classList.add("busy");else if(!Object.values(U).some(u=>u.s=="checking"))b.classList.remove("busy")};
+$("xchk").onclick=()=>{if(!(window.X||[]).some(x=>x.up))return toast("Nothing to check");send({c:"ext_check"})};
+$("exts").onclick=e=>{
+ const t=e.target.closest("[data-r],[data-c],[data-u],[data-e]");if(!t)return;
+ const r=t.dataset.r;
+ if(r!==undefined){const x=X[r];if(!x.c){x.c=1;return rbExts(X)}return send({c:"ext_remove",id:x.id})}
+ const c=t.dataset.c;if(c!==undefined){const x=X[c];U[x.id]={id:x.id,s:"checking"};rbExts(X);return send({c:"ext_check",id:x.id})}
+ const up=t.dataset.u;if(up!==undefined){const x=X[up],v=U[x.id].v||"";U[x.id]={id:x.id,s:"busy"};rbExts(X);return send({c:"ext_update",id:x.id,v})}
+ const i=t.dataset.e;if(i===undefined)return;const x=X[i];x.on=!x.on;send({c:"ext_set",id:x.id,on:x.on});t.classList.toggle("on",!!x.on);t.setAttribute("aria-checked",!!x.on);toast()};
+$("exts").onkeydown=e=>{if(e.target.dataset.e!==undefined)keyClick(e)};
+const xbusy=b=>{["xin","xgo","xfile","xdir"].forEach(i=>$(i).disabled=b);$("xprog").classList.toggle("on",b)};
+$("xform").onsubmit=e=>{e.preventDefault();if($("xin").value.trim())send({c:"ext_add",q:$("xin").value})};
+$("xfile").onclick=()=>send({c:"ext_add",pick:"file"});
+$("xdir").onclick=()=>send({c:"ext_add",pick:"folder"});
+window.rbExtStatus=r=>{
+ const s=$("xst");xbusy(r.s=="busy");s.className=r.s;s.textContent=r.s=="idle"?"":r.m+(r.s=="busy"?"…":"");
+ if(r.s=="ok"){$("xin").value="";(r.notes||[]).forEach(n=>{const d=document.createElement("div");d.textContent=n;s.append(d)})}};
+send({c:"ext_get"});
+$("imp").onclick=()=>send({c:"ob_open"});
+$("chk").onclick=()=>{$("upd").textContent="Checking…";$("chk").classList.add("busy");$("ub").hidden=true;send({c:"update_check"})};
+const badge=(c,t)=>{const b=$("ub");b.className="badge "+c;b.textContent=t;b.hidden=false};
+let UI=null;
+const fmt=d=>{const t=Date.parse(d);return t?new Date(t).toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric",timeZone:"UTC"}):""};
+const udOpen=i=>{UI=i;$("udt").textContent="Ferrum "+i.v+" is available";$("udv").textContent="v"+i.cur+" → v"+i.v+(i.date?" · Released "+fmt(i.date):"");$("udn").innerHTML=i.html||'<span class=none>No release notes were provided.</span>';$("udp").hidden=$("ude").hidden=true;$("udb").style.width="0";$("udg").disabled=!i.can;$("udg").textContent=i.can?"Update":"Update unavailable";$("udx").textContent="Cancel";$("ud").hidden=false;$("udg").focus()};
+const udBusy=b=>{$("udg").disabled=b;$("udg").classList.toggle("busy",b)};
+const udClose=()=>{if(!$("udp").hidden&&$("udg").disabled)send({c:"update_cancel"});$("ud").hidden=true;udBusy(false)};
+$("udx").onclick=udClose;
+$("ud").onclick=e=>{if(e.target==$("ud"))udClose()};
+$("ud").onkeydown=e=>{if(e.key=="Escape")udClose()};
+$("udg").onclick=()=>{$("ude").hidden=true;$("udp").hidden=false;$("udm").textContent="Starting download…";$("udb").style.width="0";udBusy(true);send({c:"update_apply"})};
+window.rbUpdProg=r=>{if(r.err){udBusy(false);$("udp").hidden=true;$("ude").hidden=false;$("ude").textContent="Update failed: "+r.err;return}
+ const p=r.total?Math.min(100,r.got/r.total*100):0;$("udb").style.width=p+"%";$("udm").textContent=r.total?"Downloading "+(r.got/1048576).toFixed(1)+" of "+(r.total/1048576).toFixed(1)+" MB":"Downloading…"};
+window.rbUpdate=r=>{const u=$("upd");$("chk").classList.remove("busy");u.textContent="";const i=r.info||(r.v?r:null);if(r.err){u.textContent="Update check failed: "+r.err;badge("err","Failed")}else if(i){const a=document.createElement("a");a.href="#";a.textContent="Version "+i.v+" available — view changes";a.onclick=e=>{e.preventDefault();udOpen(i)};u.append(a);badge("new","Update available");if(r.show)udOpen(i)}else{u.textContent="You're up to date";badge("ok","Up to date")}};
+window.rbSettings=s=>{S=s;$("ver").textContent="Version "+s.version;draw()};
+send({c:"settings_get"});send({c:"update_get"});
+
+const sc=$("sc"),nav=$("nav"),ind=$("ind"),links=[...nav.querySelectorAll("a")],secs=[...document.querySelectorAll("main section")];
+let cur="",lock=0,lt;
+function setActive(id){if(id==cur)return;cur=id;links.forEach(a=>{const on=a.dataset.s==id;a.classList.toggle("on",on);if(on){a.setAttribute("aria-current","true");place(a)}else a.removeAttribute("aria-current")})}
+function place(a){ind.style.transform=`translate(${a.offsetLeft}px,${a.offsetTop}px)`;ind.style.width=a.offsetWidth+"px";ind.style.height=a.offsetHeight+"px";if(nav.scrollWidth>nav.clientWidth)nav.scrollLeft=a.offsetLeft-(nav.clientWidth-a.offsetWidth)/2}
+function spy(){
+ if(lock){clearTimeout(lt);lt=setTimeout(()=>lock=0,140);return}
+ let id=secs[0].id;const top=sc.getBoundingClientRect().top;
+ for(const s of secs)if(s.getBoundingClientRect().top-top<=120)id=s.id;
+ if(sc.scrollTop+sc.clientHeight>=sc.scrollHeight-4)id=secs[secs.length-1].id;
+ setActive(id)}
+let raf=0;sc.addEventListener("scroll",()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(spy)},{passive:true});
+links.forEach(a=>a.onclick=e=>{e.preventDefault();const s=$(a.dataset.s);lock=1;clearTimeout(lt);lt=setTimeout(()=>lock=0,900);setActive(a.dataset.s);sc.scrollTo({top:s.offsetTop-24,behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"})});
+nav.onkeydown=e=>{const i=links.indexOf(document.activeElement);if(i<0)return;const k=e.key,n=k=="ArrowDown"||k=="ArrowRight"?i+1:k=="ArrowUp"||k=="ArrowLeft"?i-1:k=="Home"?0:k=="End"?links.length-1:-1;if(n<0)return;e.preventDefault();links[(n+links.length)%links.length].focus()};
+["wheel","touchstart","keydown"].forEach(t=>sc.addEventListener(t,()=>{lock=0},{passive:true}));
+addEventListener("resize",()=>{const c=cur;cur="";setActive(c||secs[0].id)});
+setActive(secs[0].id);
+requestAnimationFrame(()=>requestAnimationFrame(()=>ind.classList.add("rdy")));
+if("IntersectionObserver"in window){const io=new IntersectionObserver(l=>l.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");io.unobserve(x.target)}}),{root:sc,threshold:.04});secs.forEach(s=>io.observe(s))}
+setTimeout(()=>secs.forEach(s=>s.classList.add("in")),1500);
+</script>

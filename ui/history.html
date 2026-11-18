@@ -1,0 +1,18 @@
+<!doctype html><meta charset=utf-8><meta name=darkreader-lock><meta name=color-scheme content=dark><style>html{background:#131316}</style><title>History</title><link rel=stylesheet href=base.css><link rel=icon href=icons/fav.png>
+<style>
+.hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.hd h1{margin:0}
+.row a{color:inherit;text-decoration:none;min-width:0;flex:1;user-select:text}
+.row a:hover b{color:var(--ac)}
+.row div{min-width:0}
+.row b,.row small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .tm{flex:none;color:var(--dim)}
+</style>
+<div class=page><div><div class=hd><h1>History</h1><button class=chip id=clr>Clear history</button></div><div class=card id=l></div></div></div>
+<script>
+const send=o=>ipc.postMessage(JSON.stringify(o)),esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+window.rbHistory=d=>{l.innerHTML=d.length?d.map(x=>{const t=`<small class=tm>${new Date(x.last*1000).toLocaleString()}</small>`;
+ return x.search?`<div class=row><div><b>${esc(x.url)}</b><small>Search - ${x.visits} time${x.visits>1?"s":""}</small></div>${t}</div>`:`<div class=row><a href="${esc(x.url)}"><b>${esc(x.title||x.url)}</b><small>${esc(x.url)}</small></a>${t}</div>`}).join(""):'<div class=row><small>No history yet</small></div>'};
+clr.onclick=()=>send({c:"history_clear"});
+send({c:"history_get"});
+</script>

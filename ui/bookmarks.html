@@ -1,0 +1,66 @@
+<!doctype html><meta charset=utf-8><meta name=darkreader-lock><meta name=color-scheme content=dark><style>html{background:#131316}</style><title>Bookmarks</title><link rel=stylesheet href=base.css><link rel=icon href=icons/fav.png>
+<style>
+.row a{flex:1;min-width:0;color:inherit;text-decoration:none;display:flex;align-items:center;gap:12px}.row .tx{flex:1;min-width:0}.fv{width:18px;height:18px;border-radius:4px;flex:none}
+.row b,.row small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style>
+<style>
+.hd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:20px}
+.hd h1{margin:0}
+.hd div{display:flex;align-items:center;gap:8px}
+#s{height:34px;width:200px;background:var(--s2);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:0 10px;font:inherit;outline:0;user-select:text}
+#s:focus{border-color:var(--ac)}
+.fo,.mo{cursor:pointer}.fo:hover,.mo:hover{background:var(--s2)}.fo b{flex:1}
+.dt{background:color-mix(in srgb,var(--ac) 18%,var(--s1))!important;box-shadow:inset 0 0 0 1px var(--ac)}
+.chip.dn,.chip.dn:hover{background:#e5484d;border-color:#e5484d;color:#fff}
+[data-d]{cursor:grab}
+</style>
+<div class=page><div><div class=hd><h1>Bookmarks</h1><div><input id=s placeholder=Search spellcheck=false autocomplete=off><button class=chip id=imp>Import</button><button class=chip id=clr>Remove all</button><select id=fmt title="Export format"><option value=json>JSON</option><option value=html>HTML</option><option value=csv>CSV</option></select><button class=chip id=exp>Export</button></div></div><div id=l></div></div></div>
+<script>
+const send=o=>ipc.postMessage(JSON.stringify(o)),esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const N=200;
+let D={items:[],folders:[]},K=new Map,open=new Set,lim=new Map,Q="",tm=0;
+const kid=p=>{let k=K.get(p);if(!k)K.set(p,k=[]);return k};
+const nm=p=>p.slice(p.lastIndexOf("/")+1);
+const ico=u=>{let h="";try{h=new URL(u).host.toLowerCase()}catch{}return /^https?:/.test(u)&&h?`<img class=fv src="favicon/${esc(h)}.png" onerror="this.remove()">`:""};
+const row=(b,pad)=>`<div class=row ${pad} draggable=true data-d=${b.id} data-fo="${esc(b.folder??"")}"><a href="${esc(b.url)}">${ico(b.url)}<span class=tx><b>${esc(b.title)}</b><small>${esc(b.url)}</small></span></a><button class=chip data-i=${b.id}>Remove</button></div>`;
+const tree=(p,d)=>{const k=kid(p),n=lim.get(p)||N,pad=`style="padding-left:${16+d*20}px"`;
+ let h=k.slice(0,n).map(e=>typeof e=="string"?`<div class="row fo" data-p="${esc(e)}" ${pad}><b>${open.has(e)?"\u25be":"\u25b8"} ${esc(nm(e))}</b><button class=chip data-rf="${esc(e)}">Remove</button></div>${open.has(e)?tree(e,d+1):""}`:row(e,pad)).join("");
+ if(k.length>n)h+=`<div class="row mo" data-m="${esc(p)}" ${pad}><small>Show more (${k.length-n})</small></div>`;
+ return h};
+const render=()=>{
+ if(Q){const m=[];for(const b of D.items)if(b.q.includes(Q)&&m.push(b)>=N)break;
+  l.innerHTML=`<h2>${m.length>=N?N+"+":m.length} results</h2><div class=card>${m.map(b=>row(b,"")).join("")}</div>`;return}
+ l.innerHTML=`<h2>Bookmarks</h2><div class=card>${tree("",0)||"<div class=row><small>Empty</small></div>"}</div>`};
+window.rbBookmarks=d=>{
+ D=d;K.clear();
+ for(const f of d.folders)kid(f.slice(0,Math.max(f.lastIndexOf("/"),0))).push(f);
+ for(const b of d.items){b.q=(b.title+"\n"+b.url).toLowerCase();kid(b.folder??"").push(b)}
+ render()};
+const sure=(b,fn)=>{const t=b.textContent,reset=()=>{delete b.dataset.arm;b.textContent=t;b.classList.remove("dn")};
+ if(b.dataset.arm){reset();return fn()}
+ b.dataset.arm=1;b.textContent="Confirm?";b.classList.add("dn");setTimeout(()=>{if(b.isConnected&&b.dataset.arm)reset()},3000)};
+let drag=0,ov=null,ot=0;
+const dest=r=>r?(r.dataset.p??r.dataset.fo??r.dataset.m??""):"";
+const mark=t=>{l.querySelectorAll(".dt").forEach(e=>e.classList.remove("dt"));const e=t===null?null:t===""?l.querySelector(".card"):l.querySelector(`.fo[data-p="${CSS.escape(t)}"]`);if(e)e.classList.add("dt")};
+const endDrag=()=>{drag=0;ov=null;clearTimeout(ot);mark(null)};
+l.ondragstart=e=>{const r=e.target.closest("[data-d]");if(!r)return;drag=+r.dataset.d;e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",String(drag))};
+l.ondragover=e=>{if(!drag||Q)return;e.preventDefault();const r=e.target.closest(".row"),t=dest(r);mark(t);
+ if(t!==ov){ov=t;clearTimeout(ot);if(r&&r.dataset.p!==undefined&&!open.has(t))ot=setTimeout(()=>{open.add(t);render();mark(t)},600)}};
+l.ondragleave=e=>{if(!l.contains(e.relatedTarget)){mark(null);ov=null;clearTimeout(ot)}};
+l.ondrop=e=>{if(!drag||Q)return;e.preventDefault();const id=drag,t=dest(e.target.closest(".row"));endDrag();
+ if((D.items.find(b=>b.id==id)?.folder??"")===t)return;
+ for(let p=t;p;p=p.includes("/")?p.slice(0,p.lastIndexOf("/")):"")open.add(p);
+ send({c:"bm_move",id,folder:t})};
+l.ondragend=endDrag;
+l.onclick=e=>{const t=e.target,i=t.dataset.i;if(i!==undefined)return send({c:"bm_remove",id:+i});
+ if(t.dataset.rf!==undefined)return sure(t,()=>send({c:"bm_rmdir",f:t.dataset.rf}));
+ const r=t.closest("[data-p],[data-m]");if(!r)return;
+ const m=r.dataset.m,p=r.dataset.p;
+ if(m!==undefined)lim.set(m,(lim.get(m)||N)+N);else if(open.has(p))open.delete(p);else open.add(p);
+ render()};
+s.oninput=()=>{clearTimeout(tm);tm=setTimeout(()=>{Q=s.value.trim().toLowerCase();render()},150)};
+imp.onclick=()=>send({c:"bm_import"});
+clr.onclick=()=>sure(clr,()=>send({c:"bm_clear"}));
+exp.onclick=()=>send({c:"bm_export",f:fmt.value});
+send({c:"bm_get"});
+</script>

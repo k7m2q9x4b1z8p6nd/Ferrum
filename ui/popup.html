@@ -1,0 +1,142 @@
+<!doctype html><meta charset=utf-8><meta name=darkreader-lock><meta name=color-scheme content=dark><style>html{background:#131316}</style><link rel=stylesheet href=base.css><link rel=icon href=icons/fav.png>
+<style>
+body{background:var(--s2);border:1px solid var(--bd);border-top:0;border-radius:0 0 12px 12px;padding:6px}
+.it{height:36px;display:flex;align-items:center;gap:10px;padding:0 10px;border-radius:8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it:hover,.it.hl{background:var(--s3)}.it:active{background:var(--bd)}
+.it svg{color:var(--dim)}.it img{width:18px;height:18px;border-radius:50%;flex:none}
+.it .ck{margin-left:auto;color:var(--ac)}
+.it .nm{flex:1;overflow:hidden;text-overflow:ellipsis}
+.it small{color:var(--dim);max-width:45%;overflow:hidden;text-overflow:ellipsis;flex:none}
+.it .sw{margin-left:auto}
+.dr{height:64px;display:flex;align-items:center;gap:12px;padding:0 10px;border-radius:8px}
+.dr:hover{background:var(--s3)}.dr.op{cursor:pointer}
+.dr .fi{flex:none;width:32px;height:32px}
+.dr .tx{flex:1;min-width:0}
+.dr b{display:block;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dr small{color:var(--dim)}
+.dr .fo{margin-left:auto}
+.ft{height:46px;margin-top:4px;border-top:1px solid var(--bd);display:flex;align-items:center;padding:0 10px;cursor:pointer;border-radius:0 0 8px 8px;font-weight:500}
+.ft:hover{background:var(--s3)}
+.sp{height:1px;background:var(--bd);margin:4px 0}
+body.tab,body.bm{border-top:1px solid var(--bd);border-radius:12px}
+body.tab{padding:5px 6px 6px}body.dl{padding-bottom:5px}
+body.bm{padding:16px}body.bmfolder{padding:0;overflow-x:auto;overflow-y:hidden}body.bmfolder #l{display:flex;height:100%;width:max-content}
+.col{width:260px;flex:none;height:100%;overflow-y:auto;padding:6px;border-right:1px solid var(--bd)}.col:last-child{border-right:0}
+.it.on{background:var(--s3)}.it .ch{margin-left:auto;flex:none}.it img.fv{width:16px;height:16px;border-radius:4px}
+.cm{position:fixed;z-index:9;min-width:150px;padding:4px;background:var(--s2);border:1px solid var(--bd);border-radius:10px;box-shadow:0 8px 24px #0008}
+.it i{width:16px;height:16px;border-radius:4px;background:var(--s3);font:600 10px/16px system-ui;text-align:center;font-style:normal;color:var(--dim);flex:none}
+h3{font-size:15px;font-weight:600;margin-bottom:14px}
+label{display:flex;align-items:center;gap:12px;margin-bottom:12px;color:var(--dim)}
+label span{width:44px;flex:none}
+label input,label select{flex:1;min-width:0;height:36px;cursor:text;background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:0 10px;font:inherit;outline:0;user-select:text}
+label input:focus,label select:focus{border-color:var(--ac)}label select{cursor:pointer}
+.bb{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.bb button{height:34px;padding:0 18px;border-radius:8px;background:var(--s3);font-weight:500;transition:filter .12s}
+.bb button:hover{filter:brightness(1.15)}.bb button:active{filter:brightness(.9)}
+.bb #bd{background:var(--ac);color:#fff}
+.empty{height:64px;display:grid;place-items:center;color:var(--dim)}
+body.ext #l{display:flex;flex-direction:column;height:100%}
+.xl{flex:1;min-height:0;overflow-y:auto}
+.xr{height:48px;display:flex;align-items:center;gap:8px;padding:0 6px 0 8px;border-radius:8px}
+.xr:hover{background:var(--s3)}.xr.op{cursor:pointer}
+.xi{width:28px;height:28px;border-radius:7px;background:var(--s3);display:grid;place-items:center;flex:none;overflow:hidden;font-weight:600;color:var(--dim)}
+.xi img{width:24px;height:24px;object-fit:contain}
+.xt{flex:1;min-width:0}
+.xt b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.xt small{color:var(--dim);font-size:11px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.bd{border:1px solid var(--bd);border-radius:5px;padding:0 5px;font-size:10px;line-height:15px}
+.bd.chrome,.bd.firefox{border:0;padding:0;display:inline-flex}
+.bd svg{width:12px;height:12px;stroke:none}
+.xr .ib{width:28px;height:28px;flex:none}
+.xr .ib.cf{width:auto;padding:0 8px;color:#f87171;background:var(--s3)}
+.xr .sw{width:36px;margin-left:2px}
+</style>
+<div id=l></div>
+<script>
+const send=o=>ipc.postMessage(JSON.stringify(o)),esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const S='<svg viewBox="0 0 16 16"><circle cx=7 cy=7 r=4.5 /><path d="M10.5 10.5L14 14"/></svg>';
+const G='<svg viewBox="0 0 16 16"><circle cx=8 cy=8 r=6 /><path d="M2 8h12M8 2c2 2 2 10 0 12M8 2c-2 2-2 10 0 12"/></svg>';
+const PZ='<svg viewBox="0 0 16 16"><path d="M6 3h2a1.5 1.5 0 0 1 3 0h2v3a1.5 1.5 0 0 1 0 3v4H3V9a1.5 1.5 0 0 0 0-3V3z"/></svg>';
+const TR='<svg viewBox="0 0 16 16"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/></svg>';
+const SRC={chrome:"Chrome",firefox:"Firefox",local:"Local"};
+const LG={chrome:'<svg viewBox="0 0 16 16"><circle cx=8 cy=8 r=7 fill="#ea4335"/><path d="M8 8L1.94 4.5A7 7 0 0 0 8 15z" fill="#34a853"/><path d="M8 8V15A7 7 0 0 0 14.06 4.5z" fill="#fbbc05"/><circle cx=8 cy=8 r=3.3 fill="#fff"/><circle cx=8 cy=8 r=2.5 fill="#4285f4"/></svg>',firefox:'<svg viewBox="0 0 24 24"><defs><linearGradient id=ffg x1=20 y1=3 x2=5 y2=22 gradientUnits=userSpaceOnUse><stop offset=0 stop-color="#ffbd4f"/><stop offset=.45 stop-color="#ff5a3d"/><stop offset=1 stop-color="#c31a9b"/></linearGradient></defs><path fill="url(#ffg)" d="M8.824 7.287c.008 0 .004 0 0 0zm-2.8-1.4c.006 0 .003 0 0 0zm16.754 2.161c-.505-1.215-1.53-2.528-2.333-2.943.654 1.283 1.033 2.57 1.177 3.53l.002.02c-1.314-3.278-3.544-4.6-5.366-7.477-.091-.147-.184-.292-.273-.446a3.545 3.545 0 01-.13-.24 2.118 2.118 0 01-.172-.46.03.03 0 00-.027-.03.038.038 0 00-.021 0l-.006.001a.037.037 0 00-.01.005L15.624 0c-2.585 1.515-3.657 4.168-3.932 5.856a6.197 6.197 0 00-2.305.587.297.297 0 00-.147.37c.057.162.24.24.396.17a5.622 5.622 0 012.008-.523l.067-.005a5.847 5.847 0 011.957.222l.095.03a5.816 5.816 0 01.616.228c.08.036.16.073.238.112l.107.055a5.835 5.835 0 01.368.211 5.953 5.953 0 012.034 2.104c-.62-.437-1.733-.868-2.803-.681 4.183 2.09 3.06 9.292-2.737 9.02a5.164 5.164 0 01-1.513-.292 4.42 4.42 0 01-.538-.232c-1.42-.735-2.593-2.121-2.74-3.806 0 0 .537-2 3.845-2 .357 0 1.38-.998 1.398-1.287-.005-.095-2.029-.9-2.817-1.677-.422-.416-.622-.616-.8-.767a3.47 3.47 0 00-.301-.227 5.388 5.388 0 01-.032-2.842c-1.195.544-2.124 1.403-2.8 2.163h-.006c-.46-.584-.428-2.51-.402-2.913-.006-.025-.343.176-.389.206-.406.29-.787.616-1.136.974-.397.403-.76.839-1.085 1.303a9.816 9.816 0 00-1.562 3.52c-.003.013-.11.487-.19 1.073-.013.09-.026.181-.037.272a7.8 7.8 0 00-.069.667l-.002.034-.023.387-.001.06C.386 18.795 5.593 24 12.016 24c5.752 0 10.527-4.176 11.463-9.661.02-.149.035-.298.052-.448.232-1.994-.025-4.09-.753-5.844z"/></svg>'};
+const ACT={pause:["dl_pause","Pause","M5 3v10M11 3v10"],resume:["dl_resume","Resume","M5 3l8 5-8 5z"],cancel:["dl_cancel","Cancel","M4 4l8 8M12 4l-8 8"]};
+const da=x=>[x.pause&&"pause",x.paused&&"resume",x.cancel&&"cancel"].filter(Boolean).map(a=>`<button class=ib data-d=${ACT[a][0]} data-id=${x.id} title="${ACT[a][1]}"><svg viewBox="0 0 16 16"><path d="${ACT[a][2]}"/></svg></button>`).join("");
+const FO='<svg viewBox="0 0 16 16"><path d="M2 4.5A1.5 1.5 0 0 1 3.5 3H6l1.5 1.5h5A1.5 1.5 0 0 1 14 6v5.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 11.5z"/></svg>';
+const CH='<svg class=ch viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5"/></svg>';
+const fv=(h,t)=>{const L=`<i>${esc((t[0]||"·").toUpperCase())}</i>`;return h?`<img class=fv src="favicon/${h}.png" onerror="this.outerHTML=this.dataset.l" data-l="${L.replace(/"/g,"&quot;")}">`:L};
+const fg=h=>h?`<img class=fv src="favicon/${h}.png" onerror="this.outerHTML=this.dataset.l" data-l="${esc(G)}">`:G;
+const fi=n=>`<img class=fi src="fileicon/${(n.includes(".")?n.split(".").pop():"file").toLowerCase().replace(/[^a-z0-9]/g,"")||"file"}.png">`;
+const sz=b=>b>=1e9?(b/1e9).toFixed(1)+" GB":b>=1e6?(b/1e6).toFixed(1)+" MB":b>=1e3?Math.round(b/1e3)+" KB":b+" B";
+const st=x=>x.gone?"File moved or deleted":x.state=="paused"?"Paused - "+sz(x.recv)+(x.total?" of "+sz(x.total):""):x.state=="done"?"Completed - "+sz(x.size):x.state=="fail"?"Failed":sz(x.recv)+(x.total?" of "+sz(x.total):"")+" - "+sz(x.speed)+"/s",pb=x=>(x.state=="active"||x.state=="paused")&&x.total?`<div class=pb><i style="width:${Math.min(100,x.recv/x.total*100)}%"></i></div>`:"";
+let k="",items=[],hov=false,tm=0;
+const arm=()=>{clearTimeout(tm);if(k=="dl"&&auto&&items[0]&&items[0].state!="active"&&!hov)tm=setTimeout(()=>send({c:"popup_close",only:"auto"}),5000)};
+let auto=false;
+const draw={
+ sug:(x,i)=>`<div class=it data-i=${i}>${x.k=="s"?S:fg(x.h)}<span class=nm>${esc(x.l)}</span>${x.d?`<small>${esc(x.d)}</small>`:""}</div>`,
+ eng:(x,i)=>`<div class=it data-i=${i}><img src="icons/${x.id}.png">${esc(x.name)}${x.on?'<svg class=ck viewBox="0 0 16 16"><path d="M3 8.5l3.5 3.5L13 5"/></svg>':""}</div>`,
+ menu:(x,i)=>`<div class=it data-i=${i}>${esc(x.label)}</div>`,
+ tab:(x,i)=>(x.sep?'<div class=sp></div>':'')+draw.menu(x,i),
+ ext:(x,i)=>{const n=x.name.startsWith("__MSG")?"Extension":x.name;return `<div class="xr${x.opt||x.pop?" op":""}" data-i=${i}${x.opt?' title="Open settings"':x.pop?' title="Open popup page"':""}><div class=xi>${x.icon?`<img src="${esc(x.icon)}" alt="">`:esc((n[0]||"?").toUpperCase())}</div><div class=xt><b>${esc(n)}</b><small>${x.version?"v"+esc(x.version):""}<span class="bd ${esc(x.source)}" title="${SRC[x.source]||"Local"}">${LG[x.source]||"Local"}</span></small></div>${x.rm?`<button class="ib${x.c?" cf":""}" data-a=rm title="Remove" aria-label="Remove">${x.c?"Remove?":TR}</button>`:""}<div class="sw${x.on?" on":""}" data-a=tg role=switch aria-checked=${!!x.on} aria-label="Enable"></div></div>`},
+ bmfolder:(x,i)=>`<div class="it${x.on?" on":""}" data-i=${i}>${x.sub?FO:x.id?fv(x.h,x.title):""}<span class=nm>${esc(x.title)}</span>${x.sub?CH:""}</div>`,
+ bm:x=>`<h3>${x.mode=="add"?"New bookmark":x.mode=="folder"?"New folder":x.mode=="rename"?"Rename folder":x.added?"Bookmark added":"Edit bookmark"}</h3><label><span>Name</span><input id=bn value="${esc(x.title)}"></label>${x.mode=="add"?'<label><span>URL</span><input id=bu placeholder="https://"></label>':""}${x.mode=="rename"?"":`<label><span>${x.mode=="folder"?"In":"Folder"}</span><select id=bf><option value=""${x.folder==null?" selected":""}>Bookmarks bar</option>${x.folders.map(f=>`<option value="${esc(f)}"${f==x.folder?" selected":""}>${esc(f)}</option>`).join("")}<option>New folder...</option></select></label>`}<div class=bb><button id=bd>Done</button><button id=br>${x.mode?"Cancel":"Remove"}</button></div>`,
+ dl:(x,i)=>`<div class="dr${x.can?" op":""}" data-o=${x.id}>${fi(x.name)}<div class=tx><b>${esc(x.name)}</b><small>${st(x)}</small>${pb(x)}</div>${x.can?`<button class="ib fo" data-f=${x.id}>${FO}</button>`:da(x)}</div>`
+};
+window.pop={
+ render(kind,list,a){const sc=document.querySelector(".xl"),sy=sc?sc.scrollTop:0;k=kind;items=list;auto=a;document.body.className=kind;let h=list.map(draw[kind]).join("");
+  if(kind=="bmfolder")h=list.map((c,ci)=>`<div class=col data-ci=${ci}>${c.items.map((x,i)=>draw.bmfolder(x,i)).join("")}</div>`).join("");
+  document.querySelectorAll(".cm").forEach(e=>e.remove());
+  if(kind=="dl")h=(h||'<div class=empty>No downloads yet</div>')+'<div class=ft id=all>Show all downloads</div>';
+  if(kind=="ext")h='<div class=xl>'+(h||'<div class=empty>No extensions installed</div>')+'</div><div class=ft id=addx>Add or manage extensions</div>';
+  document.getElementById("l").innerHTML=h;const nx=document.querySelector(".xl");if(nx)nx.scrollTop=sy;if(kind=="bmfolder")document.body.scrollLeft=document.body.scrollWidth;arm();if(kind=="bm"){const n=document.getElementById("bn");n.focus();n.select()}},
+ hl(i){document.querySelectorAll(".it").forEach((e,j)=>e.classList.toggle("hl",j==i))}
+};
+document.addEventListener("mousedown",e=>{
+ if(k=="bm")return;
+ e.preventDefault();
+ const cm=e.target.closest(".cm .it");
+ document.querySelectorAll(".cm").forEach(x=>x.remove());
+ if(cm)return send(JSON.parse(cm.dataset.m));
+ if(k=="bmfolder"){
+  const t=e.target.closest(".it");if(!t||e.button==2)return;
+  const ci=+t.closest(".col").dataset.ci,x=items[ci].items[+t.dataset.i];
+  return send(x.sub?{c:"bm_dir",f:x.path,d:ci+1}:x.more?{c:"menuitem",id:x.id}:x.id?{c:"bm_open",id:x.id,new:e.button==1}:{c:"popup_close"})}
+ if(e.target.closest("#all"))return send({c:"dl_all"});
+ if(e.target.closest("#addx"))return send({c:"settings"});
+ const d=e.target.closest("[data-d]");if(d)return send({c:d.dataset.d,id:+d.dataset.id});
+ const f=e.target.closest("[data-f]");if(f)return send({c:"show_dl",id:+f.dataset.f});
+ const o=e.target.closest("[data-o]");if(o&&o.classList.contains("op"))return send({c:"dl_open",id:+o.dataset.o});
+ if(k=="ext"){
+  const r=e.target.closest(".xr");if(!r)return;
+  const x=items[+r.dataset.i],a=e.target.closest("[data-a]"),act=a?a.dataset.a:"";
+  if(act=="tg"){x.on=!x.on;send({c:"ext_set",id:x.id,on:x.on});return pop.render(k,items)}
+  if(act=="rm"){if(!x.c){x.c=1;return pop.render(k,items)}return send({c:"ext_remove",id:x.id})}
+  if(x.opt)send({c:"ext_open",id:x.id,p:"options"});else if(x.pop)send({c:"ext_open",id:x.id,p:"popup"});
+  return}
+ const t=e.target.closest(".it");if(!t)return;const x=items[+t.dataset.i];
+ send(k=="sug"?{c:"pick",q:x.q}:k=="eng"?{c:"engine",id:x.id}:k=="bmfolder"?(x.sub?{c:"bm_dir",f:x.path}:x.more?{c:"menuitem",id:x.id}:{c:"bm_open",id:x.id,new:e.button==1}):{c:"menuitem",id:x.id})});
+document.addEventListener("mouseover",()=>{hov=true;clearTimeout(tm)});
+document.documentElement.addEventListener("mouseleave",()=>{hov=false;arm()});
+document.oncontextmenu=e=>{
+ e.preventDefault();
+ const t=k=="bmfolder"&&e.target.closest(".it");if(!t)return;
+ const x=items[+t.closest(".col").dataset.ci].items[+t.dataset.i],o=x.sub?[["Rename folder",{c:"bm_do",a:"rename",f:x.path}],["Delete folder",{c:"bm_do",a:"rmdir",f:x.path}]]:x.id&&!x.more?[["Edit...",{c:"bm_do",a:"edit",id:x.id}],["Delete",{c:"bm_do",a:"rm",id:x.id}]]:null;
+ if(!o)return;
+ document.querySelectorAll(".cm").forEach(n=>n.remove());
+ const m=document.createElement("div");m.className="cm";
+ m.innerHTML=o.map(([l,d])=>`<div class=it data-m="${esc(JSON.stringify(d))}">${l}</div>`).join("");
+ document.body.appendChild(m);
+ m.style.left=Math.min(e.clientX,innerWidth-m.offsetWidth-4)+"px";m.style.top=Math.max(0,Math.min(e.clientY,innerHeight-m.offsetHeight-4))+"px"};
+const $=id=>document.getElementById(id);
+const bmSave=()=>{if(k!="bm")return;k="";const f=items[0];if(f.mode=="rename")return send({c:"bm_frename",f:f.folder,name:$("bn").value});const a={name:$("bn").value,folder:$("bf").value};send(f.mode=="folder"?{c:"bm_mkdir",...a}:{c:"bm_save",id:f.id,url:$("bu")?$("bu").value:"",...a})};
+document.addEventListener("click",e=>{
+ if(k!="bm")return;
+ if(e.target.id=="bd"){bmSave();send({c:"popup_close"})}
+ else if(e.target.id=="br"){const id=items[0].id;k="";send({c:"bm_remove",id})}});
+document.addEventListener("change",e=>{
+ if(e.target.id=="bf"&&e.target.selectedIndex==e.target.options.length-1){e.target.outerHTML='<input id=bf placeholder="Folder name">';$("bf").focus()}});
+document.addEventListener("keydown",e=>{
+ if(e.key=="Escape"){bmSave();send({c:"popup_close"})}
+ else if(e.key=="Enter"&&k=="bm"){bmSave();send({c:"popup_close"})}});
+window.onblur=()=>{bmSave();send({c:"popup_close",only:"focus"})};
+</script>

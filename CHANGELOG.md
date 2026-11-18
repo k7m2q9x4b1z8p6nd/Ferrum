@@ -1,0 +1,50 @@
+# Changelog
+
+## 1.0.0
+
+First public release. Ferrum is a lightweight Windows browser: a Rust shell around the system WebView2 (Chromium) runtime, with the browser UI written as plain HTML.
+
+### Browsing
+- Tabs with pinning, duplicate, close-others and reopen-closed-tab
+- **Private tabs** that keep no history and are not restored on the next start
+- **Resume last tabs** on startup (off by default)
+- **Focus mode** and borderless fullscreen: tabs and toolbar hide, move the pointer to the top edge to bring them back
+- Clean address bar option (hides `http://` and `https://`, shows internal pages by name)
+- Address bar suggestions from your history and the search engine of your choice (DuckDuckGo, Brave Search, Google, Startpage, Kagi)
+- Keyboard shortcuts for tabs, address bar, history, downloads, bookmarks, settings, fullscreen and focus mode
+
+### Bookmarks and history
+- Bookmarks bar with **nested folders** and a cascading folder popup
+- Bookmarks page with search, drag and drop, and **import/export as JSON, HTML or CSV**
+- Large imports stay fast (merging 20,000 bookmarks is a single pass)
+- History page and address bar history matching
+
+### Import from other browsers
+- Detects installed Chromium and Firefox based browsers
+- Imports **bookmarks, history, cookies and extensions**, merging with what you already have and skipping duplicates
+- First-run onboarding walks through it; it can be re-run from Settings
+
+### Extensions
+- Install Chrome extensions and **Firefox add-ons** (converted automatically) from a store link, an extension ID, a name, or a `.crx`, `.xpi`, `.zip` or folder
+- One-click **Add to Ferrum** buttons on Chrome Web Store and addons.mozilla.org pages
+- **Automatic extension updates**, with a manual check in Settings
+- **uBlock Origin**, **SponsorBlock** and **Spotify Adblock** are installed on first run (downloaded then, not bundled in the exe)
+- Enable, disable and remove extensions from the toolbar popup or Settings
+
+### Downloads
+- **Chunked parallel downloads** with pause and resume, and a downloads popup and page
+- Downloads that cannot be split fall back to a single stream
+
+### Installing and updating
+- Single `ferrum.exe`: first run offers to install to `C:\Program Files\Ferrum` (UAC prompt), adds a Start Menu shortcut and an uninstall entry
+- Declining the prompt runs it portably from wherever it is
+- **Settings > About & updates > Check for updates** shows the release notes with Cancel and Update; the new exe is verified against its published SHA-256 before it replaces the old one
+- Settings, bookmarks, history and the browser profile live in `%APPDATA%\Ferrum`
+
+### Known limitations
+- Passwords cannot be imported
+- Extensions do not run in private tabs
+- Firefox extension support is partial: add-ons that need Firefox-only features are refused
+- Manifest V2 extensions depend on WebView2 flags that Microsoft may remove in a future runtime
+- WebView2 has no extension toolbar buttons, so extension actions are opened from the Ferrum extensions popup
+- Windows only; requires the WebView2 runtime (included with current Windows 10 and 11)
