@@ -139,10 +139,10 @@ Machine: Intel Core i7-11700F (8 cores, 16 threads), 31.8 GB RAM, NVIDIA GeForce
 | --- | --- | --- |
 | Startup to first paint of the browser UI | 298 ms [272 to 369], n=7 | `scripts/perf.mjs startup`; process spawn to first meaningful paint of the toolbar page; warm profile with extensions already installed |
 | Startup to first tab (new tab page DOMContentLoaded) | 376 ms [371 to 453], n=7 | same run |
-| Memory, 1 tab, idle | 828 MiB [820 to 858], n=5 | sum of working sets of `ferrum.exe` and all its descendant `msedgewebview2.exe` processes, 12 s after launch; includes the extension background processes (uBlock Origin, SponsorBlock, Spotify Adblock) |
-| Memory, 10 tabs on a local page | 1318 MiB [1315 to 1329], n=5 | same method |
-| Exe size | 7,180,800 bytes (6.85 MiB) | `targeteleaseerrum.exe` |
-| Profile size after first run | about 59 MiB | `%APPDATA%\Ferrum` equivalent with the three preinstalled extensions and the WebView2 profile |
+| Memory, 1 tab, idle | 868 MB [860 to 900], n=5 | sum of working sets of `ferrum.exe` and all its descendant `msedgewebview2.exe` processes, 12 s after launch; includes the extension background processes (uBlock Origin, SponsorBlock, Spotify Adblock) |
+| Memory, 10 tabs on a local page | 1382 MB [1379 to 1394], n=5 | same method |
+| Exe size | 7,180,800 bytes (7.18 MB) | `target\release\ferrum.exe` |
+| Profile size after first run | about 62 MB | `%APPDATA%\Ferrum` equivalent with the three preinstalled extensions and the WebView2 profile |
 | Installed footprint | not measured | the installer needs a UAC prompt; it copies the single exe |
 | Speedometer 3.1 | 29.0 ± 0.32 (one run) | `scripts/perf.mjs speedo`, score read from the page screenshot; a single run, so no spread across runs. An earlier run on this project reported 13.4 ± 0.59 and was not reproduced; the cause was not investigated |
 | Bookmark import, 20,000 bookmarks | parse 24 / 12 / 22 ms (JSON / HTML / CSV), merge 4 / 5 / 5 ms | `cargo test --release large_import_perf -- --nocapture`, one run, in-process, no UI |
