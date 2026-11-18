@@ -70,6 +70,7 @@ pub struct Settings {
     pub auto_update_ext: bool,
     pub dl_popup: bool,
     pub resume_tabs: bool,
+    pub memory_saver: bool,
     #[serde(default = "yes")]
     pub onboarded: bool,
 }
@@ -91,6 +92,7 @@ impl Default for Settings {
             auto_update_ext: true,
             dl_popup: true,
             resume_tabs: false,
+            memory_saver: true,
             onboarded: false,
         }
     }

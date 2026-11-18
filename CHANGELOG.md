@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- **Memory saver** (Settings > General, on by default). Tabs you have not looked at for 5 minutes are put to sleep with WebView2 `TrySuspend` and their renderer memory is released; the tab title is dimmed in the strip and the tab wakes when you select it. Hidden tabs are also asked to use less memory (`MemoryUsageTargetLevel` low). Tabs that are pinned, playing audio, loading or being restored stay awake, and nothing is suspended while a download is running.
+- With Memory saver on, the preloaded new tab and the popup webview are released after a minute without use and recreated on demand: the first new tab after that takes about 65 ms instead of 15 ms and the first popup about 100 ms instead of 20 ms.
+
 ## 1.0.1
 
 ### Fixed

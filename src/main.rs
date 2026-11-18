@@ -14,6 +14,7 @@ mod icons;
 mod import;
 mod install;
 mod keys;
+mod saver;
 mod session;
 mod settings;
 mod source;
@@ -115,6 +116,7 @@ enum Ev {
     ObExt(extinstall::Done, Option<std::path::PathBuf>, Result<String, String>, std::sync::mpsc::Sender<Result<(), String>>),
     ObDone,
     Spare,
+    Suspended(u32, bool),
     Restore,
     SessTick,
     Scroll(u32, f64),
@@ -136,6 +138,8 @@ struct Tab {
     icon: String,
     scroll: f64,
     seek: bool,
+    hidden: Option<Instant>,
+    sus: bool,
 }
 
 struct Focus {
@@ -160,6 +164,10 @@ struct Browser {
     chrome: WebView,
     popup: Option<WebView>,
     popup_kind: &'static str,
+    popup_ready: bool,
+    popup_wait: Option<(&'static str, f64, f64, f64, Value)>,
+    popup_at: Instant,
+    spare_at: Instant,
     tabs: Vec<Tab>,
     spare: Option<Tab>,
     rest: VecDeque<(bool, session::Entry)>,
@@ -434,7 +442,7 @@ impl Browser {
         json!({
             "engine": s.engine.id(), "engine_name": s.engine.name(),
             "engines": Engine::ALL.iter().map(|e| json!({"id": e.id(), "name": e.name()})).collect::<Vec<_>>(),
-            "hardware_accel": s.hardware_accel, "bookmarks_bar": s.bookmarks_bar, "autofill": s.autofill, "links_in_new_tab": s.links_in_new_tab, "clean_urls": s.clean_urls, "focus_mode": s.focus_mode, "auto_update_ext": s.auto_update_ext, "dl_popup": s.dl_popup, "resume_tabs": s.resume_tabs, "version": update::VERSION,
+            "hardware_accel": s.hardware_accel, "bookmarks_bar": s.bookmarks_bar, "autofill": s.autofill, "links_in_new_tab": s.links_in_new_tab, "clean_urls": s.clean_urls, "focus_mode": s.focus_mode, "auto_update_ext": s.auto_update_ext, "dl_popup": s.dl_popup, "resume_tabs": s.resume_tabs, "memory_saver": s.memory_saver, "version": update::VERSION,
         })
     }
 
@@ -462,7 +470,7 @@ impl Browser {
             self.layout();
         }
         let st = json!({
-            "tabs": self.tabs.iter().map(|t| json!({"id": t.id, "title": t.title, "url": t.url, "loading": t.loading, "pinned": t.pinned, "private": t.private, "icon": t.icon})).collect::<Vec<_>>(),
+            "tabs": self.tabs.iter().map(|t| json!({"id": t.id, "title": t.title, "url": t.url, "loading": t.loading, "pinned": t.pinned, "private": t.private, "icon": t.icon, "sus": t.sus})).collect::<Vec<_>>(),
             "active": self.active, "engine": {"id": e.id(), "name": e.name()},
             "bar": bar, "clean": self.cfg.read().unwrap().clean_urls, "bm": self.bm.bar(), "starred": self.tab(self.active).is_some_and(|t| self.bm.starred(&t.url)), "update": self.update.as_ref().map(|u| &u.version),
         });
@@ -698,6 +706,9 @@ impl Browser {
             .build_as_child(&self.win)
             .expect("tab webview");
         apply_autofill(&wv, self.cfg.read().unwrap().autofill);
+        if !visible && self.cfg.read().unwrap().memory_saver {
+            saver::level(&wv, true);
+        }
         keys::watch(&wv, move |k| {
             let _ = key_px.send_event(Ev::Key(k));
         });
@@ -713,7 +724,7 @@ impl Browser {
         downloads::watch(&wv, move |u, r, t| {
             let _ = prog_px.send_event(Ev::DlProgress(u, r, t));
         });
-        Tab { id, wv, title: "New Tab".into(), url: url.to_owned(), loading: false, pinned: false, private, icon: String::new(), scroll: 0.0, seek: false }
+        Tab { id, wv, title: "New Tab".into(), url: url.to_owned(), loading: false, pinned: false, private, icon: String::new(), scroll: 0.0, seek: false, hidden: (!visible).then(Instant::now), sus: false }
     }
 
     fn new_tab(&mut self, url: &str) {
@@ -737,6 +748,43 @@ impl Browser {
                 std::thread::sleep(std::time::Duration::from_millis(300));
                 let _ = px.send_event(Ev::Spare);
             });
+        }
+    }
+
+    fn saver_apply(&mut self) {
+        let on = self.cfg.read().unwrap().memory_saver;
+        for t in &mut self.tabs {
+            saver::level(&t.wv, on && t.hidden.is_some());
+            if !on && std::mem::take(&mut t.sus) {
+                saver::resume(&t.wv);
+            }
+        }
+    }
+
+    fn saver_tick(&mut self) {
+        if !self.cfg.read().unwrap().memory_saver {
+            return;
+        }
+        let warm = saver::warm();
+        if self.spare.is_some() && self.spare_at.elapsed() >= warm {
+            self.spare = None;
+        }
+        if self.popup_kind.is_empty() && self.popup.is_some() && self.popup_at.elapsed() >= warm {
+            self.popup = None;
+            self.popup_ready = false;
+        }
+        let limit = saver::idle();
+        let downloading = self.dls.iter().any(|d| d.state == "active");
+        for t in &mut self.tabs {
+            let hidden_for = t.hidden.map(|h| h.elapsed());
+            let st = saver::Tab { hidden_for, suspended: t.sus, pinned: t.pinned, loading: t.loading, restoring: t.seek, audio: hidden_for.is_some_and(|d| d >= limit) && saver::playing_audio(&t.wv) };
+            if saver::eligible(&st, limit, downloading) {
+                t.hidden = Some(Instant::now());
+                let (px, id) = (self.px.clone(), t.id);
+                saver::suspend(&t.wv, move |ok| {
+                    let _ = px.send_event(Ev::Suspended(id, ok));
+                });
+            }
         }
     }
 
@@ -834,8 +882,21 @@ impl Browser {
             self.scroll_of(prev);
         }
         self.layout();
-        for t in &self.tabs {
-            let _ = t.wv.set_visible(t.id == id);
+        let saver = self.cfg.read().unwrap().memory_saver;
+        for t in &mut self.tabs {
+            let show = t.id == id;
+            let _ = t.wv.set_visible(show);
+            if show {
+                t.hidden = None;
+                if std::mem::take(&mut t.sus) {
+                    saver::resume(&t.wv);
+                }
+            } else {
+                t.hidden.get_or_insert_with(Instant::now);
+            }
+            if saver && (show || t.id == prev) {
+                saver::level(&t.wv, !show);
+            }
         }
         if self.fs.p > 0.0 {
             to_top(&self.chrome);
@@ -962,10 +1023,12 @@ impl Browser {
             let hw = self.cfg.read().unwrap().hardware_accel;
             let wv = builder(&mut self.ctx, &self.px, Src::Popup, hw).with_bounds(rect(0.0, 0.0, 1.0, 1.0)).with_visible(false).with_url("http://rb.localhost/popup").build_as_child(&self.win).expect("popup webview");
             self.popup = Some(wv);
+            self.popup_ready = false;
         }
     }
 
     fn close_popup(&mut self) {
+        self.popup_wait = None;
         if let Some(p) = &self.popup {
             let _ = p.set_visible(false);
         }
@@ -978,6 +1041,11 @@ impl Browser {
             return self.close_popup();
         }
         self.ensure_popup();
+        self.popup_at = Instant::now();
+        if !self.popup_ready {
+            self.popup_wait = Some((kind, x, y, w, items));
+            return;
+        }
         let Some(popup) = self.popup.as_ref() else { return };
         let (win_w, win_h) = self.size();
         let w = match kind {
@@ -1132,6 +1200,7 @@ impl Browser {
                 "auto_update_ext" => s.auto_update_ext = b,
                 "dl_popup" => s.dl_popup = b,
                 "resume_tabs" => s.resume_tabs = b,
+                "memory_saver" => s.memory_saver = b,
                 _ => return,
             }
             s.save();
@@ -1144,6 +1213,9 @@ impl Browser {
         if k == "resume_tabs" && !self.resume() {
             self.sess.clear();
             session::clear();
+        }
+        if k == "memory_saver" {
+            self.saver_apply();
         }
         if k == "autofill" {
             let on = self.cfg.read().unwrap().autofill;
@@ -1559,6 +1631,12 @@ impl Browser {
                     _ => self.close_popup(),
                 }
             }
+            "popup_ready" if src == Src::Popup => {
+                self.popup_ready = true;
+                if let Some((k, x, y, w, items)) = self.popup_wait.take() {
+                    self.show_popup(k, x, y, w, items);
+                }
+            }
             "popup_close" => match s("only") {
                 "sug" if self.popup_kind == "sug" => self.close_popup(),
                 "focus" if self.popup_kind != "sug" => self.close_popup(),
@@ -1866,6 +1944,7 @@ impl Browser {
             Ev::PopupInit => self.ensure_popup(),
             Ev::Restore => self.restore_one(),
             Ev::SessTick => {
+                self.saver_tick();
                 self.sess_save(false);
                 if self.resume() {
                     self.scroll_of(self.active);
@@ -1876,9 +1955,16 @@ impl Browser {
                     t.scroll = y.max(0.0);
                 }
             }
+            Ev::Suspended(id, ok) => {
+                if let Some(t) = self.tabs.iter_mut().find(|t| t.id == id && t.hidden.is_some()) {
+                    t.sus = ok;
+                    self.push();
+                }
+            }
             Ev::Spare => {
                 if self.spare.is_none() {
                     self.spare = Some(self.make_tab(NEWTAB, false, false));
+                    self.spare_at = Instant::now();
                 }
             }
             Ev::Update(manual, r) => {
@@ -2045,6 +2131,10 @@ fn main() {
         chrome,
         popup: None,
         popup_kind: "",
+        popup_ready: false,
+        popup_wait: None,
+        popup_at: Instant::now(),
+        spare_at: Instant::now(),
         tabs: vec![],
         spare: None,
         rest: VecDeque::new(),

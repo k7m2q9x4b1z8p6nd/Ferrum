@@ -139,4 +139,5 @@ document.addEventListener("keydown",e=>{
  if(e.key=="Escape"){bmSave();send({c:"popup_close"})}
  else if(e.key=="Enter"&&k=="bm"){bmSave();send({c:"popup_close"})}});
 window.onblur=()=>{bmSave();send({c:"popup_close",only:"focus"})};
+send({c:"popup_ready"});
 </script>

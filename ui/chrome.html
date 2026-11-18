@@ -9,6 +9,7 @@ body{background:var(--bg)}
 .tab img,.tab i,.bi i,.bi img{width:16px;height:16px;border-radius:4px;flex:none}
 .tab i,.bi i{background:var(--s3);font:600 10px/16px system-ui;text-align:center;font-style:normal;color:var(--dim)}
 .tab span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab.sus>span{opacity:.55}
 .tab.priv>span::before{content:"Private · "}.tab.pin{flex:0 0 40px;width:40px;padding:0;justify-content:center}.tab.pin span,.tab.pin .x{display:none}
 .tab .x{width:22px;height:22px;border-radius:6px;opacity:0}.tab:hover .x,.tab.on .x{opacity:1}
 .tab .x svg{width:12px;height:12px;stroke-width:2.2}
@@ -68,7 +69,7 @@ function draw(){
  $("strip").innerHTML=S.tabs.map(t=>{let h="";try{h=new URL(t.url).host}catch{}
   const L=`<i>${(t.title[0]||"·").toUpperCase()}</i>`,src=/^http:\/\/rb\.localhost\/(newtab)?$/.test(t.url)||h==="rb.localhost"?"icons/fav.png":t.icon,
   ic=src?`<img src="${src}" onerror="this.outerHTML=this.dataset.l" data-l="${L.replace(/"/g,"&quot;")}">`:L;
-  return `<div class="tab${t.id==S.active?" on":""}${t.loading?" ld":""}${t.pinned?" pin":""}${t.private?" priv":""}" data-id=${t.id}>${ic}<span>${t.title.replace(/</g,"&lt;")}</span><button class="ib x" data-x=${t.id}><svg viewBox="0 0 16 16"><path d="M3.5 3.5l9 9m0-9l-9 9"/></svg></button></div>`}).join("");
+  return `<div class="tab${t.id==S.active?" on":""}${t.loading?" ld":""}${t.pinned?" pin":""}${t.private?" priv":""}${t.sus?" sus":""}" data-id=${t.id}>${ic}<span>${t.title.replace(/</g,"&lt;")}</span><button class="ib x" data-x=${t.id}><svg viewBox="0 0 16 16"><path d="M3.5 3.5l9 9m0-9l-9 9"/></svg></button></div>`}).join("");
  const a=S.tabs.find(t=>t.id==S.active);
  for(const k in drafts)if(!S.tabs.some(t=>t.id==k))delete drafts[k];
  if(a){const f=document.activeElement===$("q")&&document.hasFocus(),sw=a.id!=last;last=a.id;if(sw||!(f&&a.id in drafts)){const v=shown(a.url,f);if($("q").value!==v)$("q").value=v;if(f&&sw)$("q").select()}}

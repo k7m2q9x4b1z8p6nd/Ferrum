@@ -38,7 +38,7 @@ Ferrum is Windows only. It does not ship its own rendering engine: pages are ren
 
 ### Settings
 
-General (downloads popup, resume last tabs, open links in new tab, hardware acceleration), search engine, clean address bar, focus mode, autofill, bookmarks bar, extensions, import, and About and updates.
+General (downloads popup, resume last tabs, open links in new tab, memory saver, hardware acceleration), search engine, clean address bar, focus mode, autofill, bookmarks bar, extensions, import, and About and updates.
 
 ## Screenshots
 
@@ -142,6 +142,8 @@ Machine: Intel Core i7-11700F (8 cores, 16 threads), 31.8 GB RAM, NVIDIA GeForce
 | Startup to first tab (new tab page DOMContentLoaded) | 376 ms [371 to 453], n=7 | same run |
 | Memory, 1 tab, idle | 868 MB [860 to 900], n=5 | sum of working sets of `ferrum.exe` and all its descendant `msedgewebview2.exe` processes, 12 s after launch; includes the extension background processes (uBlock Origin, SponsorBlock, Spotify Adblock) |
 | Memory, 10 tabs on a local page | 1382 MB [1379 to 1394], n=5 | same method |
+| Private memory, 1 / 5 / 10 tabs, Memory saver off | 267 / 336 / 506 MB, 11 / 15 / 20 processes, n=5 / 3 / 5 | `scripts/mem.mjs`: private working set (`WorkingSetPrivate`) of `ferrum.exe` and all descendant `msedgewebview2.exe`, 45 s after the last tab loaded, distinct `*.localhost` origins; this is a different method from the two rows above, so the figures are not comparable with them |
+| Private memory, 1 / 5 / 10 tabs, Memory saver on | 239 / 258 / 363 MB, 9 / 13 / 18 processes, n=5 / 3 / 5 | same method, with `FERRUM_SUSPEND_SECS=15` so tabs sleep after 15 s instead of 5 minutes |
 | Exe size | 7,180,800 bytes (7.18 MB) | `target\release\ferrum.exe` |
 | Profile size after first run | about 62 MB | `%APPDATA%\Ferrum` equivalent with the three preinstalled extensions and the WebView2 profile |
 | Installed footprint | not measured | the installer needs a UAC prompt; it copies the single exe |
@@ -149,7 +151,7 @@ Machine: Intel Core i7-11700F (8 cores, 16 threads), 31.8 GB RAM, NVIDIA GeForce
 | Bookmark import, 20,000 bookmarks | parse 24 / 12 / 22 ms (JSON / HTML / CSV), merge 4 / 5 / 5 ms | `cargo test --release large_import_perf -- --nocapture`, one run, in-process, no UI |
 | Chunked vs single-connection download | not re-measured for this release | an earlier local run against a server throttled to about 2 MB/s per connection saw about 8.6 MB/s chunked vs about 2 MB/s for one connection; treat as an earlier, unrepeated measurement |
 
-Caveats: the memory figure sums working sets, which counts pages shared between the WebView2 processes more than once, so it overstates real memory use. Startup was measured with the DevTools port enabled and without the installer path (`FERRUM_NO_INSTALL=1`). Everything is one machine, a handful of runs, and background load was not controlled.
+Caveats: the working-set rows sum working sets, which counts pages shared between the WebView2 processes more than once, so it overstates real memory use. Startup was measured with the DevTools port enabled and without the installer path (`FERRUM_NO_INSTALL=1`). Everything is one machine, a handful of runs, and background load was not controlled.
 
 
 ## Known limitations
