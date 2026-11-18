@@ -8,7 +8,7 @@ use std::time::Duration;
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 const LATEST: &str = "https://api.github.com/repos/k7m2q9x4b1z8p6nd/Ferrum/releases/latest";
 const UA: &str = concat!("Ferrum/", env!("CARGO_PKG_VERSION"));
-const HOSTS: [&str; 3] = ["github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com"];
+const HOSTS: [&str; 4] = ["api.github.com", "github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com"];
 const MAX_BYTES: u64 = 150 * 1024 * 1024;
 const HOPS: usize = 6;
 const BODY_CAP: usize = 20_000;
@@ -351,6 +351,7 @@ mod tests {
 
     #[test]
     fn host_allowlist() {
+        assert!(host_ok(LATEST, false));
         assert!(host_ok("https://github.com/a/b", false));
         assert!(host_ok("https://objects.githubusercontent.com/x?y=1", false));
         assert!(host_ok("https://release-assets.githubusercontent.com/x", false));
