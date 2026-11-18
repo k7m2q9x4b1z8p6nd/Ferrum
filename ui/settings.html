@@ -223,6 +223,9 @@ section>:nth-child(2){--i:1}section>:nth-child(3){--i:2}section>:nth-child(4){--
 <div class=card><div class="row pad"><b>Add extension</b><small>Chrome Web Store or addons.mozilla.org link, extension ID or add-on name, or a direct .crx / .xpi / .zip link. Firefox extensions are converted automatically; the ones that need Firefox-only features are refused</small>
 <form class=add id=xform><input id=xin placeholder="Paste a link, ID or name" autocomplete=off spellcheck=false aria-label="Extension link, ID or name"><button class="chip pri" id=xgo><svg><use href=#i-pl /></svg>Add to Ferrum</button></form>
 <div class=prog id=xprog aria-hidden=true><i></i></div>
+<div class=or>userscripts</div>
+<div class=add><button type=button class=chip id=xvm><svg><use href=#i-pl /></svg>Add Violentmonkey</button></div>
+<small>Violentmonkey runs userscripts in Ferrum. Tampermonkey from the Chrome Web Store needs the chrome.userScripts API, which WebView2 does not provide</small>
 <div class=or>or load from disk</div>
 <div class=add><button type=button class=chip id=xfile><svg><use href=#i-fl /></svg>Choose file…</button><button type=button class=chip id=xdir><svg><use href=#i-fd /></svg>Choose folder…</button></div>
 <small id=xst role=status aria-live=polite></small></div></div>
@@ -288,6 +291,7 @@ $("exts").onclick=e=>{
  const i=t.dataset.e;if(i===undefined)return;const x=X[i];x.on=!x.on;send({c:"ext_set",id:x.id,on:x.on});t.classList.toggle("on",!!x.on);t.setAttribute("aria-checked",!!x.on);toast()};
 $("exts").onkeydown=e=>{if(e.target.dataset.e!==undefined)keyClick(e)};
 const xbusy=b=>{["xin","xgo","xfile","xdir"].forEach(i=>$(i).disabled=b);$("xprog").classList.toggle("on",b)};
+$("xvm").onclick=()=>send({c:"ext_add",q:"violentmonkey"});
 $("xform").onsubmit=e=>{e.preventDefault();if($("xin").value.trim())send({c:"ext_add",q:$("xin").value})};
 $("xfile").onclick=()=>send({c:"ext_add",pick:"file"});
 $("xdir").onclick=()=>send({c:"ext_add",pick:"folder"});

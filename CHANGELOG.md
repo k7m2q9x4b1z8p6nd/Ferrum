@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.1
+
+### Fixed
+- **Focus mode with a fullscreen page** (for example a fullscreen video): moving the pointer to the top edge, or focusing the address bar, now brings back the tabs and toolbar. They previously stayed hidden until fullscreen ended.
+- **Firefox add-ons with a non-persistent background page** (`"persistent": false`) were rejected with "The browser rejected the extension: Class not registered". They are now converted so the browser accepts them.
+
+### Added
+- **Add Violentmonkey** button under Settings > Extensions > userscripts. Violentmonkey installs from addons.mozilla.org and runs userscripts; checked by installing a script and loading a page it matches.
+
+### Known limitations
+- **Tampermonkey does not run scripts in Ferrum.** The Chrome Web Store build is Manifest V3 and needs `chrome.userScripts`, which WebView2 leaves undefined even with the `userScripts` permission granted. The addons.mozilla.org build is refused (it needs Firefox container tabs) and relies on Firefox's own `userScripts` API. Use Violentmonkey.
+
 ## 1.0.0
 
 First public release. Ferrum is a lightweight Windows browser: a Rust shell around the system WebView2 (Chromium) runtime, with the browser UI written as plain HTML.

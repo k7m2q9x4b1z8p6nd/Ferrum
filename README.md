@@ -13,6 +13,7 @@ Ferrum is Windows only. It does not ship its own rendering engine: pages are ren
 - **Bookmarks** with nested folders, a cascading folder popup in the bookmarks bar, search and drag and drop; **import and export as JSON, HTML or CSV**
 - **Import from other browsers** (Chromium and Firefox based): bookmarks, history, cookies and extensions, merged without duplicates
 - **Extensions**: install Chrome extensions and Firefox add-ons (converted to Chromium extensions) from a store link, ID, name, `.crx`/`.xpi`/`.zip` or folder; one-click **Add to Ferrum** buttons on the Chrome Web Store and addons.mozilla.org; **automatic updates**
+- **Userscripts** through Violentmonkey (one-click button in Settings > Extensions)
 - **uBlock Origin, SponsorBlock and Spotify Adblock** are installed on first run (downloaded then, not bundled in the exe)
 - **Downloads**: chunked parallel downloads with pause and resume, popup and page
 - **Focus mode** and borderless fullscreen: tabs and toolbar hide; they slide back in when you bring the pointer to the top edge
@@ -158,6 +159,7 @@ Caveats: the memory figure sums working sets, which counts pages shared between 
 - Firefox extension compatibility is partial: add-ons that need Firefox-only features are refused.
 - Manifest V2 extensions rely on WebView2 flags that Microsoft may remove in a future runtime.
 - WebView2 has no extension toolbar buttons; extension popups and options are opened from Ferrum's extensions popup.
+- Tampermonkey cannot run scripts: the Chrome Web Store build needs `chrome.userScripts`, which WebView2 does not expose, and the addons.mozilla.org build needs Firefox-only APIs. Use Violentmonkey.
 - Windows only.
 - No license has been chosen for this repository yet, so by default all rights are reserved.
 

@@ -365,7 +365,7 @@ impl Browser {
     }
 
     fn reveal(&mut self) {
-        if self.fs.on && !self.fs.page {
+        if self.fs.on {
             self.fs.to = true;
             self.fs.leave = Some(Instant::now() + Duration::from_millis(600));
             if self.fs.p == 0.0 {
@@ -394,7 +394,7 @@ impl Browser {
 
     fn fs_tick(&mut self) {
         self.fs.next = None;
-        if !self.fs.on || self.fs.page {
+        if !self.fs.on {
             return;
         }
         let now = Instant::now();

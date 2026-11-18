@@ -401,6 +401,9 @@ fn keep_v2(o: &mut Map<String, Value>, mut notes: Vec<String>, firefox: bool) ->
             a.remove("default_icon");
         }
     }
+    if let Some(b) = o.get_mut("background").and_then(Value::as_object_mut).filter(|b| b.get("persistent") == Some(&json!(false))) {
+        b.remove("persistent");
+    }
     if firefox {
         polyfill_content(o);
         if let Some(Value::Array(s)) = o.get_mut("background").and_then(|b| b.get_mut("scripts")) {
@@ -968,6 +971,9 @@ mod tests {
         assert!(p.mv2 && blocking["manifest_version"] == 2);
         let mut hard = json!({"manifest_version": 2, "permissions": ["webRequestBlocking", "contextualIdentities"]});
         assert!(convert(&mut hard).unwrap_err().contains("contextualIdentities"));
+        let mut event_page = json!({"manifest_version": 2, "permissions": ["webRequest", "webRequestBlocking"], "background": {"page": "bg.html", "persistent": false}});
+        convert(&mut event_page).unwrap().unwrap();
+        assert_eq!(event_page["background"], json!({"page": "bg.html"}));
         let mut page = json!({"manifest_version": 2, "background": {"page": "bg.html"}});
         let p = convert(&mut page).unwrap().unwrap();
         assert_eq!(p.bg_page.as_deref(), Some("bg.html"));
